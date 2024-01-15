@@ -35,13 +35,13 @@ def lastweekssales():
         SELECT
             ds.date,
             CASE 
-                WHEN strftime('%w', ds.date) = '1' THEN 'Monday'
-                WHEN strftime('%w', ds.date) = '2' THEN 'Tuesday'
-                WHEN strftime('%w', ds.date) = '3' THEN 'Wednesday'
-                WHEN strftime('%w', ds.date) = '4' THEN 'Thursday'
-                WHEN strftime('%w', ds.date) = '5' THEN 'Friday'
-                WHEN strftime('%w', ds.date) = '6' THEN 'Saturday'
-                WHEN strftime('%w', ds.date) = '0' THEN 'Sunday'
+                WHEN strftime('%w', ds.date) = '1' THEN 'M'
+                WHEN strftime('%w', ds.date) = '2' THEN 'T'
+                WHEN strftime('%w', ds.date) = '3' THEN 'W'
+                WHEN strftime('%w', ds.date) = '4' THEN 'T'
+                WHEN strftime('%w', ds.date) = '5' THEN 'F'
+                WHEN strftime('%w', ds.date) = '6' THEN 'S'
+                WHEN strftime('%w', ds.date) = '0' THEN 'S'
             END AS day_of_week,
             COALESCE(SUM(CAST(p.Amount AS DECIMAL)), 0) AS total_amount
         FROM
@@ -60,11 +60,7 @@ def lastweekssales():
     conn1.close()
     return reciept
 
-a=lastweekssales()
-weeklypayment=[]
-for i in a:
-    weeklypayment.append(i[2])
-print(weeklypayment)
+
 
 def montlypayment():
     conn=sqlite3.connect(DB_NAME)
@@ -93,15 +89,7 @@ def montlypayment():
     conn.close()
     return paymentdata
 
-monthlist=[]
-monthsdata=[]
-x=montlypayment()
-for i in x:
-    monthlist.append(i[0])
-    monthsdata.append(i[1])
 
-print(monthlist)
-print(monthsdata)
 
 
 def montlyreciept():
@@ -131,15 +119,7 @@ def montlyreciept():
     conn.close()
     return paymentdata
 
-monthlist1=[]
-monthsdata1=[]
-x1=montlyreciept()
-for i in x1:
-    monthlist1.append(i[0])
-    monthsdata1.append(i[1])
 
-print(monthlist1)
-print(monthsdata1)
 
 def percentchange():
     conn = sqlite3.connect(DB_NAME)
@@ -163,15 +143,7 @@ def percentchange():
 
     return perc
 
-percentchan=[]
-x2=percentchange()
-for i in x2:
-    percentchan.append(i[2])
 
-print(percentchan)
-
-lossorgain=((percentchan[0]-percentchan[1])/percentchan[0])*100
-print(lossorgain)
 
 @blueprint.route('/index')
 @login_required
@@ -202,10 +174,57 @@ def index():
     query5 = "SELECT ledgername,Amount,date,paymethod FROM payment ORDER BY Voucher DESC LIMIT 10"
     cursor5.execute(query5)
     last10payments = cursor5.fetchall()
+    conn.close()
+
+    a=lastweekssales()
+    weeklypayment=[]
+    daysway=[]
+    for i in a:
+        weeklypayment.append(i[2])
+        daysway.append(i[1])
+    
+    print(weeklypayment)
+    print(daysway)
+
+    monthlist=[]
+
+    monthsdata=[]
+    x=montlypayment()
+    for i in x:
+        monthlist.append(i[0])
+        monthsdata.append(i[1])
+
+    print(monthlist)
+    print(monthsdata)
+    maxpayment=max(monthsdata)
+
+    monthlist1=[]
+    monthsdata1=[]
+
+    x1=montlyreciept()
+    for i in x1:
+        monthlist1.append(i[0])
+        monthsdata1.append(i[1])
+
+    print(monthlist1)
+    print(monthsdata1)
+
+    maxreciept=max(monthsdata1)
+
+    percentchan=[]
+    x2=percentchange()
+    for i in x2:
+        percentchan.append(i[2])
+
+    print(percentchan)
+
+    lossorgain=((percentchan[0]-percentchan[1])/percentchan[0])*100
+    print(lossorgain)
 
 
     return render_template('home/index.html', segment='index',total_cus=str(data)[2:-3],todaysales=str(totalsale)[2:-3],todaysale=str(todaysale)[2:-3],totalreciept=str(totalreciept)[2:-3]
-    ,last10payments=last10payments,weeklypayment=weeklypayment,monthlist=monthlist,monthsdata=monthsdata,monthlist1=monthlist1,monthsdata1=monthsdata1,lossorgain=lossorgain)
+    ,last10payments=last10payments,weeklypayment=weeklypayment,monthlist=monthlist,monthsdata=monthsdata,monthlist1=monthlist1,monthsdata1=monthsdata1,lossorgain=lossorgain,daysway=daysway
+    ,maxreciept=maxreciept,maxpayment=maxpayment,maxsalesinaweek=max(weeklypayment))
 
 def latesttra():
     query="""SELECT *
@@ -221,13 +240,16 @@ ORDER BY date DESC LIMIT 8;"""
     data = cursor.fetchall()
     return data
 
-NEWEST=latesttra()
+
     
 
 
 @blueprint.route('/<template>')
 @login_required
 def route_template(template):
+
+    NEWEST=latesttra()
+    print(NEWEST)
 
     page = request.args.get('page', 1, type=int)
     items_per_page = 10                                 # Adjust this based on your needs
