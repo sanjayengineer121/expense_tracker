@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2023 - present [AppSeed](https://sanjayengineer121.github.io/)
+Copyright (c) 2023 - present [Sanjay](https://sanjayengineer121.github.io/)
 
 <br />
 
@@ -29,4 +29,3 @@ Copyright (c) 2023 - present [AppSeed](https://sanjayengineer121.github.io/)
 <br />
 
 ---
-For more information regarding licensing, please contact the AppSeed Service < *support@appseed.us* >
