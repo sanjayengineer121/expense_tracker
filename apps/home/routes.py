@@ -107,6 +107,14 @@ def latestvrchofrec():
     conn.close()
     return p1
 
+def card():
+    conn=sqlite3.connect(DB_NAME)
+    cursor=conn.cursor()
+    qr='SELECT cardno,cardholder,exmonth,exyear,ccv FROM cardinfo'
+    cursor.execute(qr)
+    p1=cursor.fetchall()
+    conn.close()
+    return p1
 
 def montlyreciept():
     conn=sqlite3.connect(DB_NAME)
@@ -199,8 +207,8 @@ def index():
         weeklypayment.append(i[2])
         daysway.append(i[1])
     
-    print(weeklypayment)
-    print(daysway)
+    # print(weeklypayment)
+    # print(daysway)
 
     monthlist=[]
 
@@ -210,8 +218,8 @@ def index():
         monthlist.append(i[0])
         monthsdata.append(i[1])
 
-    print(monthlist)
-    print(monthsdata)
+    # print(monthlist)
+    # print(monthsdata)
     maxpayment=max(monthsdata)
 
     monthlist1=[]
@@ -222,8 +230,8 @@ def index():
         monthlist1.append(i[0])
         monthsdata1.append(i[1])
 
-    print(monthlist1)
-    print(monthsdata1)
+    # print(monthlist1)
+    # print(monthsdata1)
 
     maxreciept=max(monthsdata1)
 
@@ -352,8 +360,8 @@ def route_template(template):
     result1 = "PE" + str(incremented_number1).zfill(5)
     print(result1)
     
-
-    # str(totalreciept)[2:-3]
+    carddet=card()
+    print(carddet)
 
 
     try:
@@ -366,7 +374,7 @@ def route_template(template):
 
         # Serve the file (if exists) from app/templates/home/FILE.html
         return render_template("home/" + template, segment=segment,payments=payments, page=page,reciept=reciept,customers=customers,page1=page1,customerslist=customerslist,paymthd=paymthd
-        ,NEWEST=NEWEST,result=result,result1=result1)
+        ,NEWEST=NEWEST,result=result,result1=result1,carddet=carddet)
 
     except TemplateNotFound:
         return render_template('home/page-404.html'), 404
@@ -454,6 +462,20 @@ def addpayment():
 def Payment_Method():
     newmethod = request.form.get("newmethod")
     print(newmethod)
+
+    conn = sqlite3.connect(DB_NAME)
+            #conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM paymthd WHERE paymthd='"+newmethod+"'")
+    record = cur.fetchone()
+    if record is None:
+        query3 = f"INSERT INTO paymthd (paymthd) VALUES ('{newmethod}')"
+        cur.execute(query3)
+        print("customer null: ")
+        conn.commit()
+    else:
+        print("customer not null: ")
+    print(record)  
     
     return redirect(url_for('home_blueprint.route_template', template='billing'))
 
@@ -470,6 +492,20 @@ def addcard():
     print(expieryyear)
     ccv=request.form.get('ccv')
     print(ccv)
+
+    conn = sqlite3.connect(DB_NAME)
+            #conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM cardinfo WHERE cardno='"+cardno+"'")
+    record = cur.fetchone()
+    if record is None:
+        query3 = f"INSERT INTO cardinfo (cardno,cardholder,exmonth,exyear,ccv) VALUES ('{cardno}', '{nameoncard}', '{expireymonth}', {expieryyear},'{ccv}')"
+        cur.execute(query3)
+        print("customer null: ")
+        conn.commit()
+    else:
+        print("customer not null: ")
+    print(record)  
 
     
     return redirect(url_for('home_blueprint.route_template', template='billing'))
