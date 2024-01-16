@@ -89,7 +89,23 @@ def montlypayment():
     conn.close()
     return paymentdata
 
+def latestvrchofpay():
+    conn=sqlite3.connect(DB_NAME)
+    cursor=conn.cursor()
+    qr='SELECT max(Voucher) FROM payment'
+    cursor.execute(qr)
+    p=cursor.fetchall()
+    conn.close()
+    return p
 
+def latestvrchofrec():
+    conn=sqlite3.connect(DB_NAME)
+    cursor=conn.cursor()
+    qr='SELECT max(Voucher) FROM reciept'
+    cursor.execute(qr)
+    p1=cursor.fetchall()
+    conn.close()
+    return p1
 
 
 def montlyreciept():
@@ -325,6 +341,20 @@ def route_template(template):
                             # Close the database connection
     conn5.close()
 
+    rc_number = str(latestvrchofrec())[3:-4]
+    print(rc_number)
+    incremented_number = int(rc_number[2:]) + 1
+    result = "RC" + str(incremented_number).zfill(5)
+    print(result)
+
+    rc_number1=str(latestvrchofpay())[3:-4]
+    incremented_number1 = int(rc_number1[2:]) + 1
+    result1 = "PE" + str(incremented_number1).zfill(5)
+    print(result1)
+    
+
+    # str(totalreciept)[2:-3]
+
 
     try:
 
@@ -336,7 +366,7 @@ def route_template(template):
 
         # Serve the file (if exists) from app/templates/home/FILE.html
         return render_template("home/" + template, segment=segment,payments=payments, page=page,reciept=reciept,customers=customers,page1=page1,customerslist=customerslist,paymthd=paymthd
-        ,NEWEST=NEWEST)
+        ,NEWEST=NEWEST,result=result,result1=result1)
 
     except TemplateNotFound:
         return render_template('home/page-404.html'), 404
