@@ -1,0 +1,183 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Notifications {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<link href="/static/assets/css/choices.min.css" rel="stylesheet" />
+<script src="/static/assets/js/choices.min.js"></script>
+
+    <div class="container-fluid py-3">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          
+          <div class="card mt-4">
+            <div class="card-header p-2">
+             
+                  <form class="ui form" action="/search" method="post">
+                    <div class="card-body p-1">
+                      <div class="row">
+                        <div class="col-md-8">
+                          <select class="selectpicker form-control border-1 mb-2 px-3 py-3 rounded shadow" name="searchcontent">
+                            {% for item in customersdata %}
+                              <option value="{{ item[0] }}">{{ item[0] }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="col-md-4">
+                          <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                  
+            </div>
+            <div class="card-body p-2">
+              <div class="row">
+                <div class="col-lg-3 col-sm-6 col-12">
+                  <button class="btn bg-gradient-success w-100 mb-0 toast-btn" type="button" data-target="successToast">Payment List</button>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                  <button class="btn bg-gradient-info w-100 mb-0 toast-btn" type="button" data-target="infoToast">Reciept List</button>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                  <button class="btn bg-gradient-warning w-100 mb-1 toast-btn" type="button" data-target="warningToast">Balance Report</button>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                  <button class="btn bg-gradient-dark w-100 mb-1 toast-btn" type="button" data-target="warningToast">Co/Customer Info</button>
+                </div>
+                
+              </div>
+            </div>
+            <div class="table-responsive p-0" class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab" id="payment-container">
+              
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">COMPANY/CUSTOMER</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">AMOUNT</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">VOUCHER</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">DATE</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">PAYMENT METHOD(BANK)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                  
+                  {% for item in data1 %}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        <div>
+                          <img src="/static/assets/img/team-3.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user4">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{ item[0] }}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
+                    </td>
+                    {% if item[2].startswith('PE') %}
+                    <td class="align-middle text-center text-sm">
+                      <span class="badge badge-sm bg-gradient-warning">{{ item[2] }}</span>
+                    </td>
+                    {% else %}
+                    <td class="align-middle text-center text-sm">
+                      <span class="badge badge-sm bg-gradient-success">{{ item[2] }}</span>
+                  {% endif %}
+                    <!-- <td class="align-middle text-center text-sm">
+                      <span class="badge badge-sm bg-gradient-success">{{ item[2] }}</span>
+                    </td> -->
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ item[3] }}</span>
+                    </td>
+                    <td class="align-middle text-center">
+                      {{ item[4] }}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+      <div class="position-fixed bottom-1 end-1 z-index-2">
+        <div class="toast fade hide p-2 bg-white" role="alert" aria-live="assertive" id="successToast" aria-atomic="true">
+          <div class="toast-header border-0">
+            <i class="material-icons text-success me-2">check</i>
+            <span class="me-auto font-weight-bold">Material Dashboard </span>
+            <small class="text-body">11 mins ago</small>
+            <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+          </div>
+          <hr class="horizontal dark m-0">
+          <div class="toast-body">
+            Hello, world! This is a notification message.
+          </div>
+        </div>
+        <div class="toast fade hide p-2 mt-2 bg-gradient-info" role="alert" aria-live="assertive" id="infoToast" aria-atomic="true">
+          <div class="toast-header bg-transparent border-0">
+            <i class="material-icons text-white me-2">notifications</i>
+            <span class="me-auto text-white font-weight-bold">Material Dashboard </span>
+            <small class="text-white">11 mins ago</small>
+            <i class="fas fa-times text-md text-white ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+          </div>
+          <hr class="horizontal light m-0">
+          <div class="toast-body text-white">
+            Hello, world! This is a notification message.
+          </div>
+        </div>
+        <div class="toast fade hide p-2 mt-2 bg-white" role="alert" aria-live="assertive" id="warningToast" aria-atomic="true">
+          <div class="toast-header border-0">
+            <i class="material-icons text-warning me-2">travel_explore</i>
+            <span class="me-auto font-weight-bold">Material Dashboard </span>
+            <small class="text-body">11 mins ago</small>
+            <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+          </div>
+          <hr class="horizontal dark m-0">
+          <div class="toast-body">
+            Hello, world! This is a notification message.
+          </div>
+        </div>
+        <script>
+          const sorting = document.querySelector('.selectpicker');
+          const commentSorting = document.querySelector('.selectpicker');
+          const sortingchoices = new Choices(sorting, {
+              placeholder: false,
+              itemSelectText: ''
+          });
+    
+    
+          // Trick to apply your custom classes to generated dropdown menu
+          let sortingClass = sorting.getAttribute('class');
+          window.onload= function () {
+              sorting.parentElement.setAttribute('class', sortingClass);
+          }
+        </script>
+        
+        <div class="toast fade hide p-2 mt-2 bg-white" role="alert" aria-live="assertive" id="dangerToast" aria-atomic="true">
+          <div class="toast-header border-0">
+            <i class="material-icons text-danger me-2">campaign</i>
+            <span class="me-auto text-gradient text-danger font-weight-bold">Material Dashboard </span>
+            <small class="text-body">11 mins ago</small>
+            <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+          </div>
+          <hr class="horizontal dark m-0">
+          <div class="toast-body">
+            Hello, world! This is a notification message.
+          </div>
+        </div>
+      </div>
+
+    {% include 'includes/footer.html' %}
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

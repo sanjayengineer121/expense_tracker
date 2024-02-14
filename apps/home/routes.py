@@ -264,8 +264,58 @@ ORDER BY date DESC LIMIT 8;"""
     data = cursor.fetchall()
     return data
 
+@blueprint.route('/search',methods=['GET','POST'])
+def getdata():
+    data=request.form.get('searchcontent')
+    print(data)
+    query=f"SELECT * FROM payment WHERE ledgername = '{data}' UNION SELECT * FROM reciept WHERE ledgername = '{data}' ORDER BY date DESC"
 
-    
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data1 = cursor.fetchall()
+
+    conn2 = sqlite3.connect(DB_NAME)
+    cursor2 = conn2.cursor()
+
+    query2 = "SELECT * from Legders"
+
+    cursor2.execute(query2)
+    customers = cursor2.fetchall()
+
+                            # Close the database connection
+    conn2.close()
+
+
+    return render_template('home/search.html',data1=data1,customersdata=customers)
+
+
+@blueprint.route('/notifications',methods=['GET','POST'])
+def search():
+    # data=request.form.get('searchcontent')
+    # print(data)
+    # query=f"SELECT * FROM payment WHERE ledgername = '{data}' UNION SELECT * FROM reciept WHERE ledgername = '{data}' ORDER BY date DESC"
+
+    # conn = sqlite3.connect(DB_NAME)
+    # cursor = conn.cursor()
+    # cursor.execute(query)
+    # data1 = cursor.fetchall()
+    # print(data1)
+
+    conn2 = sqlite3.connect(DB_NAME)
+    cursor2 = conn2.cursor()
+
+    query2 = "SELECT * from Legders"
+
+    cursor2.execute(query2)
+    customers = cursor2.fetchall()
+
+                            # Close the database connection
+    conn2.close()
+
+
+    return render_template('home/search.html',customersdata=customers)
+
 
 
 @blueprint.route('/<template>')
@@ -509,6 +559,9 @@ def addcard():
 
     
     return redirect(url_for('home_blueprint.route_template', template='billing'))
+
+
+
 
 # Helper - Extract current page name from request
 def get_segment(request):
