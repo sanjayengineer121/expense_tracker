@@ -35,6 +35,4 @@ if DEBUG:
     app.logger.info('ASSETS_ROOT      = ' + app_config.ASSETS_ROOT )
 
 if __name__ == "__main__":
-    url="http://127.0.0.1:"+str(8050)+"/"
-    webbrowser.open_new(url)
     app.run(host="0.0.0.0",port=8050,use_reloader=False)
